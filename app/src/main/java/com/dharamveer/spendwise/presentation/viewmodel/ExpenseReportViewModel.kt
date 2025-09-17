@@ -30,33 +30,45 @@ class ExpenseReportViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
 
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val dailyTotals = mutableMapOf<String, Double>()
-            val categoryTotals = mutableMapOf<String, Double>()
+            useCases.getAllExpenses().collectLatest { expenses ->
+                val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val dailyTotals = mutableMapOf<String, Double>()
+                val categoryTotals = mutableMapOf<String, Double>()
 
-            val cal = Calendar.getInstance()
-            val endOfToday = cal.timeInMillis
+                // compute last 7 days
+                val cal = Calendar.getInstance()
+                val todayEnd = cal.timeInMillis
 
-            for (i in 0..6) {
-                val dayEnd = endOfToday - i * 24 * 60 * 60 * 1000
-                val dayStart = dayEnd - 24 * 60 * 60 * 1000 + 1
-
-                useCases.getExpensesBetween(dayStart, dayEnd).collectLatest { expenses ->
-                    val dateLabel = sdf.format(Date(dayStart))
-                    dailyTotals[dateLabel] = expenses.sumOf { it.amount }
-
-                    expenses.forEach { e ->
-                        val old = categoryTotals.getOrDefault(e.category, 0.0)
-                        categoryTotals[e.category] = old + e.amount
+                for (i in 0..6) {
+                    val dayCal = Calendar.getInstance().apply {
+                        add(Calendar.DAY_OF_YEAR, -i)
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
                     }
+                    val dayStart = dayCal.timeInMillis
+                    val dayEnd = dayStart + (24 * 60 * 60 * 1000) - 1
+
+                    val dayExpenses = expenses.filter { it.timestamp in dayStart..dayEnd }
+                    dailyTotals[sdf.format(Date(dayStart))] = dayExpenses.sumOf { it.amount }
+                }
+
+                // category totals
+                expenses.forEach { e ->
+                    val old = categoryTotals.getOrDefault(e.category, 0.0)
+                    categoryTotals[e.category] = old + e.amount
+                }
+
+                _state.update {
+                    it.copy(
+                        dailyTotals = dailyTotals,
+                        categoryTotals = categoryTotals,
+                        isLoading = false,
+                        error = null
+                    )
                 }
             }
-
-            _state.update { it.copy(
-                dailyTotals = dailyTotals,
-                categoryTotals = categoryTotals,
-                isLoading = false
-            ) }
         }
     }
 }
