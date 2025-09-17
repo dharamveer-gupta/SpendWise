@@ -2,7 +2,7 @@ package com.dharamveer.spendwise.domain.usecase
 
 import javax.inject.Inject
 
-data class ExpenseUseCase @Inject constructor(
+data class ExpenseUseCases @Inject constructor(
     val addExpense: AddExpenseUseCase,
     val getAllExpenses: GetAllExpensesUseCase,
     val getExpensesBetween: GetExpensesBetweenUseCase,
