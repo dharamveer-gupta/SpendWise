@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.dharamveer.spendwise.presentation.ui.entry.ExpenseEntryScreen
-import com.dharamveer.spendwise.presentation.ui.list.ExpenseListScreen
-import com.dharamveer.spendwise.presentation.ui.report.ExpenseReportScreen
+import com.dharamveer.spendwise.presentation.navigation.SpendWiseNavHost
 import com.dharamveer.spendwise.ui.theme.SpendWiseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,9 +16,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SpendWiseTheme {
-//                ExpenseEntryScreen()
-//                ExpenseListScreen()
-                ExpenseReportScreen()
+                SpendWiseNavHost()
             }
         }
     }
