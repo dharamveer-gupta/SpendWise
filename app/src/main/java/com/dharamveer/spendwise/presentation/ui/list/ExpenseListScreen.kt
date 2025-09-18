@@ -9,10 +9,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dharamveer.spendwise.data.local.entity.Expense
 import com.dharamveer.spendwise.presentation.viewmodel.ExpenseListViewModel
+import com.dharamveer.spendwise.worker.SyncScheduler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,10 +22,31 @@ fun ExpenseListScreen(
     viewModel: ExpenseListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("All Expenses") })
+            TopAppBar(
+                title = { Text("All Expenses") },
+                actions = {
+                    // Debug Work Status button (for development)
+                    TextButton(onClick = {
+                        SyncScheduler.logWorkStatus(context)
+                        // Also log all work by tags
+                        android.util.Log.d("ExpenseListScreen", "=== WORK DEBUG INFO ===")
+                        android.util.Log.d("ExpenseListScreen", "Triggering debug from UI")
+                    }) {
+                        Text("Debug")
+                    }
+                    // Sync Now button in top bar
+                    TextButton(onClick = {
+                        android.util.Log.d("ExpenseListScreen", "Manual sync triggered from UI")
+                        SyncScheduler.triggerOneTimeSync(context)
+                    }) {
+                        Text("Sync Now")
+                    }
+                }
+            )
         }
     ) { padding ->
         Column(
@@ -87,6 +110,9 @@ fun ExpenseItem(
                 Text(text = expense.title, style = MaterialTheme.typography.titleMedium)
                 Text(text = "₹${expense.amount}", style = MaterialTheme.typography.bodyLarge)
                 Text(text = "Category: ${expense.category}", style = MaterialTheme.typography.bodySmall)
+                if (!expense.isSynced) {
+                    Text("Pending Sync", color = MaterialTheme.colorScheme.error)
+                }
             }
             IconButton(onClick = onDelete) {
                 Icon(

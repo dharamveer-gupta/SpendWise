@@ -83,6 +83,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.workmanager)
+    implementation(libs.androidx.hilt.work) // Hilt + WorkManager integration
+    ksp(libs.androidx.hilt.compiler)
+
     implementation(libs.coil.compose)
 
     // Debug tools
