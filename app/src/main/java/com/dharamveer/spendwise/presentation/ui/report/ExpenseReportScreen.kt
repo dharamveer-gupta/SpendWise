@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dharamveer.spendwise.presentation.viewmodel.ExpenseReportViewModel
@@ -19,6 +20,7 @@ fun ExpenseReportScreen(
     viewModel: ExpenseReportViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -31,6 +33,16 @@ fun ExpenseReportScreen(
                 .padding(16.dp)
                 .fillMaxSize()
         ) {
+            // Export Buttons
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { viewModel.exportExpensesToCsv(context) }) {
+                    Text("Export CSV")
+                }
+                Button(onClick = { viewModel.exportExpensesToPdf(context) }) {
+                    Text("Export PDF")
+                }
+            }
+
             // Chart Placeholder
             Box(
                 modifier = Modifier

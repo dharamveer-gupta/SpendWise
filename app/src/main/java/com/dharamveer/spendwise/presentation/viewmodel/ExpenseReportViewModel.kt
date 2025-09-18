@@ -1,8 +1,11 @@
 package com.dharamveer.spendwise.presentation.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dharamveer.spendwise.domain.usecase.ExpenseUseCases
+import com.dharamveer.spendwise.export.CsvExporter
+import com.dharamveer.spendwise.export.PdfExporter
 import com.dharamveer.spendwise.presentation.state.ExpenseReportState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -71,4 +74,23 @@ class ExpenseReportViewModel @Inject constructor(
             }
         }
     }
+
+    fun exportExpensesToCsv(context: Context) {
+        viewModelScope.launch {
+            useCases.getAllExpenses().collectLatest { expenses ->
+                val file = CsvExporter.export(context, expenses)
+                _state.update { it.copy(error = "CSV exported to: ${file.absolutePath}") }
+            }
+        }
+    }
+
+    fun exportExpensesToPdf(context: Context) {
+        viewModelScope.launch {
+            useCases.getAllExpenses().collectLatest { expenses ->
+                val file = PdfExporter.export(context, expenses)
+                _state.update { it.copy(error = "PDF exported to: ${file.absolutePath}") }
+            }
+        }
+    }
+
 }
