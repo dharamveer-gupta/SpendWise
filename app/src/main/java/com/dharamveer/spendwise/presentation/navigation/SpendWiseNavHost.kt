@@ -8,6 +8,7 @@ import androidx.navigation.compose.*
 import com.dharamveer.spendwise.presentation.ui.entry.ExpenseEntryScreen
 import com.dharamveer.spendwise.presentation.ui.list.ExpenseListScreen
 import com.dharamveer.spendwise.presentation.ui.report.ExpenseReportScreen
+import com.dharamveer.spendwise.presentation.ui.settings.SettingsScreen
 
 @Composable
 fun SpendWiseNavHost() {
@@ -43,6 +44,11 @@ fun SpendWiseNavHost() {
             composable(NavItem.Entry.route) { ExpenseEntryScreen() }
             composable(NavItem.List.route) { ExpenseListScreen() }
             composable(NavItem.Report.route) { ExpenseReportScreen() }
+            composable(NavItem.Settings.route) {
+                SettingsScreen(
+                    onNavigateBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
