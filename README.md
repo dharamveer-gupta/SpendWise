@@ -44,7 +44,8 @@ Here are some key prompts used with AI tools during development:
 ---
 
 ## 📲 APK Download
-👉 [Download APK here](https://drive.google.com/file/d/1OYAxYcFD9OHqPHvXLZ0ZfX1V9_BgVrI3/view?usp=sharing)
+👉 [Download Debug APK here](https://drive.google.com/file/d/1OYAxYcFD9OHqPHvXLZ0ZfX1V9_BgVrI3/view?usp=sharing)
+👉 [Download Release APK here](https://drive.google.com/file/d/1swwMCBZHnkA9lSODTulhKtn2h4gkXYSP/view?usp=sharing)
 
 ---
 
