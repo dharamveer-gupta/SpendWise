@@ -21,9 +21,19 @@ class ExpenseEntryViewModel @Inject constructor(
     private val _state = MutableStateFlow(ExpenseEntryState())
     val state: StateFlow<ExpenseEntryState> = _state
 
-    fun onTitleChange(newTitle: String) = _state.update { it.copy(title = newTitle) }
-    fun onAmountChange(newAmount: String) = _state.update { it.copy(amount = newAmount) }
-    fun onCategoryChange(newCategory: String) = _state.update { it.copy(category = newCategory) }
+    fun onTitleChange(newTitle: String) = _state.update { it.copy(title = newTitle, errorTitle = if (newTitle.isBlank()) "Title cannot be empty" else null) }
+    fun onAmountChange(newAmount: String) = _state.update {
+        val amountVal = newAmount.toDoubleOrNull()
+        it.copy(
+            amount = newAmount,
+            errorAmount = when {
+                newAmount.isBlank() -> "Amount cannot be empty"
+                amountVal == null || amountVal <= 0 -> "Enter valid amount"
+                else -> null
+            }
+        )
+    }
+    fun onCategoryChange(newCategory: String) = _state.update { it.copy(category = newCategory, errorCategory = if (newCategory.isBlank()) "Please select a category" else null) }
     fun onNotesChange(newNotes: String) = _state.update { it.copy(notes = newNotes) }
 
     fun addExpense() {
